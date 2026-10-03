@@ -139,6 +139,7 @@ C:\laravel project\
 │   │   │       └── delete-user-form.blade.php
 │   │   └── points-fraicheur/               MODULE : pages publiques
 │   │       ├── index.blade.php             liste + filtre type + recherche
+│   │       ├── carte.blade.php             carte Leaflet + « Près de moi »
 │   │       └── show.blade.php              détail + lien OpenStreetMap
 │   │
 │   ├── back/                               ══ VUES DU BACK OFFICE
@@ -183,6 +184,7 @@ C:\laravel project\
 │
 ├── public/
 │   ├── assets/front/                       templates front (VaultEdge) : css, js, img, fonts
+│   │   └── vendor/leaflet/                 Leaflet 1.9.4 en local (pas de CDN)
 │   ├── assets/back/                        templates back (Sneat) : css, js, img, vendor
 │   └── build/                              sortie Vite (non utilisée par les layouts)
 │
@@ -241,6 +243,8 @@ C:\laravel project\
 | GET     | `/login`, `/register` | `login`,`register`| `routes/auth.php`  | Authentification (public) |
 | GET     | `/profile`            | `profile.edit`    | `routes/front.php` | Profil (connecté)         |
 | GET     | `/points-fraicheur`   | `points-fraicheur.index` | `routes/front.php` | Liste des points (public) |
+| GET     | `/points-fraicheur/carte` | `points-fraicheur.carte` | `routes/front.php` | Carte interactive (public) |
+| GET     | `/points-fraicheur/proches` | `points-fraicheur.proches` | `routes/front.php` | Points proches, JSON (public) |
 | GET     | `/points-fraicheur/{pointFraicheur}` | `points-fraicheur.show` | `routes/front.php` | Détail du point (public) |
 | GET     | `/admin`              | `admin.dashboard` | `routes/back.php`  | Tableau de bord (admin)   |
 | *       | `/admin/users`        | `admin.users.*`   | `routes/back.php`  | CRUD utilisateurs (admin) |
@@ -251,6 +255,50 @@ C:\laravel project\
   dans `bootstrap/app.php`) renvoie **403** aux non-administrateurs.
 - Après connexion, un administrateur est dirigé vers `/admin`, un utilisateur vers `/`
   (voir `app/Support/AuthRedirect.php`).
+
+## Valeur ajoutée du module Points de fraîcheur
+
+**Carte interactive avec géolocalisation « Près de moi ».**
+La page `/points-fraicheur/carte` affiche tous les points sur une carte
+Leaflet + OpenStreetMap (fichiers Leaflet servis **en local** dans
+`public/assets/front/vendor/leaflet/`, aucune clé API, seules les tuiles
+proviennent d'Internet). Au clic sur un marqueur, une fenêtre affiche le nom,
+le type, l'adresse, les horaires, le badge « Accessible » ainsi que deux liens :
+« Détails » (page du point) et « Itinéraire » (OSRM à pied, nouvel onglet).
+
+- Bouton **« Près de moi »** : le navigateur fournit la position, la carte se
+  centre dessus (marqueur « Vous êtes ici ») et la liste latérale affiche les
+  points **triés du plus proche au plus éloigné** avec la distance en km
+  (1 décimale). Un clic sur un élément centre la carte et ouvre la fenêtre.
+  Refus de la permission / position indisponible / délai dépassé : message en
+  français affiché dans la page (jamais d'`alert()`).
+- **Filtre par type** : masque les marqueurs et la liste sans rechargement.
+- **Lien « Carte »** dans le menu front (état actif) et bouton **« Voir sur la
+  carte »** sur la page détail : `/points-fraicheur/carte?point={id}` ouvre la
+  carte centrée sur ce point (zoom 16).
+- Côté serveur, le scope `PointFraicheur::lesPlusProches()` calcule la distance
+  en SQL avec la **formule de Haversine** (rayon 6371 km, bindings SQL, protection
+  `LEAST(1, GREATEST(-1, ...))` autour de `acos()`).
+
+| Méthode | URI                                      | Nom                          | Description                                      |
+|---------|------------------------------------------|------------------------------|--------------------------------------------------|
+| GET     | `/points-fraicheur/carte`                | `points-fraicheur.carte`     | Carte Leaflet, filtre, géolocalisation (public)  |
+| GET     | `/points-fraicheur/proches?lat=&lng=&limit=` | `points-fraicheur.proches` | JSON des points triés par distance (public, 422 si coordonnées invalides) |
+
+**Scénario de démonstration en 5 étapes**
+
+1. L'habitant ouvre le menu **Carte** : les 30 points de fraîcheur s'affichent
+   sur la carte, la vue englobe tous les marqueurs.
+2. Il choisit **Type de point → Fontaine** : seules les fontaines restent
+   visibles, la carte et la liste se mettent à jour sans rechargement.
+3. Il clique sur **Près de moi** et autorise la géolocalisation : la carte se
+   centre sur sa position (marqueur « Vous êtes ici ») et la liste affiche les
+   distances en km, du plus proche au plus éloigné.
+4. Il clique sur un point de la liste : la carte se recentre (zoom 16) et la
+   fenêtre du marqueur s'ouvre ; il clique sur **Détails** pour voir la fiche
+   complète du point.
+5. Sur la fiche, il clique sur **Itinéraire** : OpenStreetMap s'ouvre dans un
+   nouvel onglet avec l'itinéraire à pied jusqu'au point de fraîcheur.
 
 ## Points d'attention
 
@@ -268,10 +316,13 @@ C:\laravel project\
 php artisan test
 ```
 
-51 tests (152 assertions) — SQLite en mémoire (`phpunit.xml`).
+55 tests (182 assertions) — SQLite en mémoire (`phpunit.xml`).
 `tests/Feature/PointsFraicheurTest.php` couvre la consultation publique, le filtre
 par type, la recherche, la pagination, les accès (invité / utilisateur / admin),
 la validation et le refus de suppression d'un type avec points.
+`tests/Feature/PointsFraicheurCarteTest.php` couvre la page carte, le tri par
+distance de la route `proches` (Haversine) et la réponse 422 des coordonnées
+invalides.
 
 Données de démonstration du module :
 
