@@ -12,22 +12,18 @@
 */
 
 use App\FrontOffice\Controllers\HomeController;
+use App\FrontOffice\Controllers\PointFraicheurController;
 use App\FrontOffice\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Page d'accueil.
 Route::get('/', [HomeController::class, 'index'])->name('front.home');
 
-/*
-| Module « Points de fraîcheur » (à créer par l'équipe) :
-| les routes du module seront ajoutées ici, puis commentées seront retirées.
-|
-| Route::get('/points-fraicheur', [PointFraicheurController::class, 'index'])
-|     ->name('points-fraicheur.index');
-| Route::get('/points-fraicheur/{pointFraicheur}', [PointFraicheurController::class, 'show'])
-|     ->scopeBindings()
-|     ->name('points-fraicheur.show');
-*/
+// Module « Points de fraîcheur » : pages publiques.
+Route::get('/points-fraicheur', [PointFraicheurController::class, 'index'])
+    ->name('points-fraicheur.index');
+Route::get('/points-fraicheur/{pointFraicheur}', [PointFraicheurController::class, 'show'])
+    ->name('points-fraicheur.show');
 
 // Profil de l'utilisateur connecté.
 Route::middleware('auth')->group(function () {
