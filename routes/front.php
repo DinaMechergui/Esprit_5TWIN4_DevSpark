@@ -22,6 +22,12 @@ Route::get('/', [HomeController::class, 'index'])->name('front.home');
 // Module « Points de fraîcheur » : pages publiques.
 Route::get('/points-fraicheur', [PointFraicheurController::class, 'index'])
     ->name('points-fraicheur.index');
+// Carte interactive et points proches : déclarées AVANT la route avec
+// paramètre {pointFraicheur} pour éviter tout conflit d'URL.
+Route::get('/points-fraicheur/carte', [PointFraicheurController::class, 'carte'])
+    ->name('points-fraicheur.carte');
+Route::get('/points-fraicheur/proches', [PointFraicheurController::class, 'proches'])
+    ->name('points-fraicheur.proches');
 Route::get('/points-fraicheur/{pointFraicheur}', [PointFraicheurController::class, 'show'])
     ->name('points-fraicheur.show');
 
