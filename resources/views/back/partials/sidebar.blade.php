@@ -35,9 +35,15 @@
             </a>
         </li>
 
-        {{-- Module « Points de fraîcheur » : à décommenter quand le CRUD sera créé
+        {{-- Module « Points de fraîcheur » --}}
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Module</span>
+            <span class="menu-header-text">Points de fraîcheur</span>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.types-point.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.types-point.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-category"></i>
+                <div data-i18n="Types de points">Types de points</div>
+            </a>
         </li>
         <li class="menu-item {{ request()->routeIs('admin.points-fraicheur.*') ? 'active' : '' }}">
             <a href="{{ route('admin.points-fraicheur.index') }}" class="menu-link">
@@ -45,7 +51,6 @@
                 <div data-i18n="Points de fraîcheur">Points de fraîcheur</div>
             </a>
         </li>
-        --}}
 
         {{-- Accès au site public --}}
         <li class="menu-header small text-uppercase">
