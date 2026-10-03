@@ -27,9 +27,9 @@ class TypePointSeeder extends Seeder
                 'icone' => 'fa fa-snowflake',
             ],
             [
-                'nom' => 'Fontaine',
-                'description' => 'Points d\'eau potable pour se désaltérer.',
-                'icone' => 'fa fa-tint',
+                'nom' => 'Plage',
+                'description' => 'Plages de la côte de la Grande Tunis.',
+                'icone' => 'fa fa-umbrella',
             ],
         ];
 

@@ -54,6 +54,12 @@ npm run build
 
 10 utilisateurs supplémentaires sont générés (données de démonstration).
 
+Le module « Points de fraîcheur » est rempli avec **30 lieux réels de la
+Grande Tunis** (11 parcs, 12 salles climatisées, 7 plages) relevés sur
+OpenStreetMap (coordonnées et adresse via géocodage inverse Nominatim,
+horaires lorsqu'ils sont renseignés sur OSM) : ceci rend le tri par distance
+de la carte « Près de moi » représentatif de la réalité.
+
 ---
 
 ## Arborescence (front office / back office séparés)
@@ -200,8 +206,8 @@ C:\laravel project\
 │   │   └── PointFraicheurFactory.php
 │   └── seeders/
 │       ├── DatabaseSeeder.php              comptes de démonstration
-│       ├── TypePointSeeder.php             3 types (Parc, Salle climatisée, Fontaine)
-│       └── PointFraicheurSeeder.php        30 points (10 par type)
+│       ├── TypePointSeeder.php             3 types (Parc, Salle climatisée, Plage)
+│       └── PointFraicheurSeeder.php        30 lieux réels de Grande Tunis (OSM)
 │
 ├── tests/
 │   ├── Feature/
@@ -289,7 +295,7 @@ le type, l'adresse, les horaires, le badge « Accessible » ainsi que deux liens
 
 1. L'habitant ouvre le menu **Carte** : les 30 points de fraîcheur s'affichent
    sur la carte, la vue englobe tous les marqueurs.
-2. Il choisit **Type de point → Fontaine** : seules les fontaines restent
+2. Il choisit **Type de point → Plage** : seules les plages de la côte restent
    visibles, la carte et la liste se mettent à jour sans rechargement.
 3. Il clique sur **Près de moi** et autorise la géolocalisation : la carte se
    centre sur sa position (marqueur « Vous êtes ici ») et la liste affiche les
@@ -327,5 +333,5 @@ invalides.
 Données de démonstration du module :
 
 ```bash
-php artisan migrate:fresh --seed   # 3 types × 10 points = 30 points
+php artisan migrate:fresh --seed   # 30 points réels (11 parcs, 12 salles climatisées, 7 plages)
 ```
