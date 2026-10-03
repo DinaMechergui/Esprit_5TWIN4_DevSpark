@@ -6,7 +6,8 @@ administrateurs.
 
 - **Front office** : template `VaultEdge` (Bootstrap 4.1.3).
 - **Back office** : template `Sneat` (Bootstrap 5).
-- **Module à venir** : « Points de fraîcheur » (`PointFraicheur` lié à `Quartier`).
+- **Module « Points de fraîcheur »** : `PointFraicheur` lié à `TypePoint` (consultation
+  publique + CRUD back office).
 
 ## Prérequis
 
@@ -64,12 +65,18 @@ C:\laravel project\
 │   ├── BackOffice/                         ══ BACK OFFICE (réservé aux admins)
 │   │   ├── Controllers/
 │   │   │   ├── DashboardController.php     /admin — statistiques & activité
-│   │   │   └── UserController.php          CRUD /admin/users
+│   │   │   ├── UserController.php          CRUD /admin/users
+│   │   │   ├── TypePointController.php     CRUD /admin/types-point
+│   │   │   └── PointFraicheurController.php CRUD /admin/points-fraicheur
 │   │   ├── Middleware/
 │   │   │   └── AdminMiddleware.php         alias « admin » → 403 si non-admin
 │   │   └── Requests/
 │   │       ├── StoreUserRequest.php        validation création
-│   │       └── UpdateUserRequest.php       validation modification
+│   │       ├── UpdateUserRequest.php       validation modification
+│   │       ├── StoreTypePointRequest.php   validation création type
+│   │       ├── UpdateTypePointRequest.php  validation modification type
+│   │       ├── StorePointFraicheurRequest.php  validation création point
+│   │       └── UpdatePointFraicheurRequest.php validation modification point
 │   │
 │   ├── FrontOffice/                        ══ FRONT OFFICE (public + espace user)
 │   │   ├── Controllers/
@@ -84,13 +91,17 @@ C:\laravel project\
 │   │   │   │   ├── RegisteredUserController.php
 │   │   │   │   └── VerifyEmailController.php
 │   │   │   ├── HomeController.php          page d'accueil /
+│   │   │   ├── PointFraicheurController.php /points-fraicheur (public)
 │   │   │   └── ProfileController.php       /profile
 │   │   └── Requests/
 │   │       ├── Auth/LoginRequest.php       validation connexion
 │   │       └── ProfileUpdateRequest.php    validation profil
 │   │
 │   ├── Http/Controllers/Controller.php     contrôleur de base PARTAGÉ
-│   ├── Models/User.php                     modèle PARTAGÉ (rôle admin/user)
+│   ├── Models/                             modèles PARTAGÉS
+│   │   ├── User.php                        rôle admin/user
+│   │   ├── TypePoint.php                   type de point (1-N points)
+│   │   └── PointFraicheur.php              point de fraîcheur (N-1 type)
 │   ├── Providers/AppServiceProvider.php
 │   └── Support/AuthRedirect.php            redirections post-login PARTAGÉES
 │
@@ -126,7 +137,9 @@ C:\laravel project\
 │   │   │       ├── update-profile-information-form.blade.php
 │   │   │       ├── update-password-form.blade.php
 │   │   │       └── delete-user-form.blade.php
-│   │   └── points-fraicheur/               module à créer (index, show)
+│   │   └── points-fraicheur/               MODULE : pages publiques
+│   │       ├── index.blade.php             liste + filtre type + recherche
+│   │       └── show.blade.php              détail + lien OpenStreetMap
 │   │
 │   ├── back/                               ══ VUES DU BACK OFFICE
 │   │   ├── layouts/back.blade.php          gabarit général (sans @vite)
@@ -142,7 +155,18 @@ C:\laravel project\
 │   │   │       ├── create.blade.php
 │   │   │       ├── edit.blade.php
 │   │   │       └── show.blade.php
-│   │   └── points-fraicheur/               module à créer (CRUD)
+│   │   ├── types-point/                    MODULE : CRUD des types
+│   │   │   ├── _form.blade.php             formulaire partagé
+│   │   │   ├── index.blade.php             liste + recherche
+│   │   │   ├── create.blade.php
+│   │   │   ├── edit.blade.php
+│   │   │   └── show.blade.php              détail + points rattachés
+│   │   └── points-fraicheur/               MODULE : CRUD des points
+│   │       ├── _form.blade.php             formulaire partagé
+│   │       ├── index.blade.php             liste + recherche
+│   │       ├── create.blade.php
+│   │       ├── edit.blade.php
+│   │       └── show.blade.php              détail + repère cartographique
 │   │
 │   ├── components/                         COMPOSANTS PARTAGÉS (front + back)
 │   │   ├── alert.blade.php
@@ -167,14 +191,21 @@ C:\laravel project\
 │   └── {auth,pagination,passwords,validation,...}.php
 │
 ├── database/
-│   ├── migrations/                         schéma (+ rôle dans users)
-│   ├── factories/UserFactory.php           états user / admin
-│   └── seeders/DatabaseSeeder.php          comptes de démonstration
+│   ├── migrations/                         schéma (+ rôle, type_points, points_fraicheur)
+│   ├── factories/
+│   │   ├── UserFactory.php                 états user / admin
+│   │   ├── TypePointFactory.php
+│   │   └── PointFraicheurFactory.php
+│   └── seeders/
+│       ├── DatabaseSeeder.php              comptes de démonstration
+│       ├── TypePointSeeder.php             3 types (Parc, Salle climatisée, Fontaine)
+│       └── PointFraicheurSeeder.php        30 points (10 par type)
 │
 ├── tests/
 │   ├── Feature/
 │   │   ├── AdminAccessTest.php             403 back office, accès admin
 │   │   ├── PagesRenderTest.php             rendu de toutes les pages
+│   │   ├── PointsFraicheurTest.php         module points de fraîcheur
 │   │   ├── ProfileTest.php
 │   │   └── Auth/{Authentication,Registration,EmailVerification,...}Test.php
 │   └── Unit/
@@ -209,8 +240,12 @@ C:\laravel project\
 | GET     | `/`                   | `front.home`      | `routes/front.php` | Accueil (public)         |
 | GET     | `/login`, `/register` | `login`,`register`| `routes/auth.php`  | Authentification (public) |
 | GET     | `/profile`            | `profile.edit`    | `routes/front.php` | Profil (connecté)         |
+| GET     | `/points-fraicheur`   | `points-fraicheur.index` | `routes/front.php` | Liste des points (public) |
+| GET     | `/points-fraicheur/{pointFraicheur}` | `points-fraicheur.show` | `routes/front.php` | Détail du point (public) |
 | GET     | `/admin`              | `admin.dashboard` | `routes/back.php`  | Tableau de bord (admin)   |
 | *       | `/admin/users`        | `admin.users.*`   | `routes/back.php`  | CRUD utilisateurs (admin) |
+| *       | `/admin/types-point`  | `admin.types-point.*` | `routes/back.php`  | CRUD types de point (admin) |
+| *       | `/admin/points-fraicheur` | `admin.points-fraicheur.*` | `routes/back.php` | CRUD points (admin) |
 
 - Le middleware `admin` (`app/BackOffice/Middleware/AdminMiddleware.php`, alias déclaré
   dans `bootstrap/app.php`) renvoie **403** aux non-administrateurs.
@@ -222,9 +257,10 @@ C:\laravel project\
 - **Pas de `@vite`** dans les layouts : CSS/JS chargés depuis `public/assets/...`
   (aucun lien en dur, toujours `asset()` / `route()`).
 - Langue `fr`, fuseau `Europe/Paris`, données de démo `fr_FR`.
-- Le CRUD « Points de fraîcheur » reste à créer : routes commentées dans
-  `routes/front.php` et `routes/back.php`, dossiers vides prêts dans
-  `resources/views/{front,back}/points-fraicheur/`.
+- **Module « Points de fraîcheur »** : `TypePoint` (1) — `PointFraicheur` (N) ;
+  la suppression d'un type encore rattaché à des points est refusée par le contrôleur.
+  Les styles du front sont ajoutés dans `public/assets/front/css/app-custom.css`
+  (section « Points de fraîcheur »), jamais dans les fichiers du template.
 
 ## Tests
 
@@ -232,4 +268,13 @@ C:\laravel project\
 php artisan test
 ```
 
-34 tests — SQLite en mémoire (`phpunit.xml`).
+51 tests (152 assertions) — SQLite en mémoire (`phpunit.xml`).
+`tests/Feature/PointsFraicheurTest.php` couvre la consultation publique, le filtre
+par type, la recherche, la pagination, les accès (invité / utilisateur / admin),
+la validation et le refus de suppression d'un type avec points.
+
+Données de démonstration du module :
+
+```bash
+php artisan migrate:fresh --seed   # 3 types × 10 points = 30 points
+```
