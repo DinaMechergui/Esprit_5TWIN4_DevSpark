@@ -97,6 +97,15 @@
             </div>
 
             <div class="pf-detail-actions text-center">
+                <a href="{{ route('points-fraicheur.carte', ['point' => $point->id]) }}" class="ve-btn-primary">
+                    <i class="fa fa-map-marker" aria-hidden="true"></i> Voir sur la carte
+                </a>
+                <a href="https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&amp;route=;{{ $point->latitude }},{{ $point->longitude }}"
+                   class="ve-btn-ghost"
+                   target="_blank"
+                   rel="noopener">
+                    <i class="fa fa-location-arrow" aria-hidden="true"></i> Itinéraire
+                </a>
                 <a href="{{ route('points-fraicheur.index') }}" class="ve-btn-ghost">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i> Retour à la liste
                 </a>

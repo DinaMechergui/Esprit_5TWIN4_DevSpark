@@ -588,3 +588,334 @@
         text-align: center;
     }
 }
+
+/* --- Carte interactive (module Points de fraîcheur) --- */
+.pf-map-section {
+    background: var(--ve-light);
+}
+
+/* Barre d'outils : filtre + géolocalisation */
+.pf-map-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.pf-map-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pf-map-filter label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ve-text);
+}
+
+.pf-map-filter select {
+    min-width: 240px;
+    padding: 13px 16px;
+    border: 1px solid var(--ve-border);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--ve-dark);
+    appearance: none;
+    transition: var(--ve-trans);
+}
+
+.pf-map-filter select:focus {
+    outline: none;
+    border-color: var(--ve-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.pf-map-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 20px;
+    border: 1px solid var(--ve-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ve-dark);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--ve-trans);
+}
+
+.pf-map-back:hover {
+    border-color: var(--ve-gold);
+    color: var(--ve-gold);
+}
+
+/* Messages (géolocalisation, erreurs) */
+.pf-map-message {
+    max-width: 820px;
+    margin: 0 auto 22px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--ve-border);
+    color: var(--ve-text);
+}
+
+.pf-map-message.is-info {
+    border-color: rgba(212, 175, 55, 0.55);
+    background: rgba(212, 175, 55, 0.12);
+    color: var(--ve-dark);
+}
+
+.pf-map-message.is-success {
+    border-color: rgba(40, 167, 69, 0.45);
+    background: rgba(40, 167, 69, 0.12);
+    color: #1e7e34;
+}
+
+.pf-map-message.is-error {
+    border-color: rgba(220, 53, 69, 0.45);
+    background: rgba(220, 53, 69, 0.10);
+    color: #b92c32;
+}
+
+/* État « aucun point » */
+.pf-map-empty {
+    text-align: center;
+    background: #fff;
+    border: 1px dashed var(--ve-border);
+    border-radius: var(--ve-radius);
+    padding: 60px 20px;
+}
+
+.pf-map-empty i {
+    font-size: 32px;
+    color: var(--ve-gold);
+    margin-bottom: 12px;
+}
+
+.pf-map-empty p {
+    color: var(--ve-text);
+    font-size: 17px;
+    margin-bottom: 18px;
+}
+
+/* Disposition : carte à gauche, liste à droite */
+.pf-map-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.pf-map-canvas {
+    height: 520px;
+    border: 1px solid var(--ve-border);
+    border-radius: var(--ve-radius);
+    overflow: hidden;
+    background: #e6e9ee;
+    z-index: 0;
+}
+
+/* Liste latérale */
+.pf-map-side {
+    display: flex;
+    flex-direction: column;
+    height: 520px;
+    background: #fff;
+    border: 1px solid var(--ve-border);
+    border-radius: var(--ve-radius);
+    overflow: hidden;
+}
+
+.pf-map-side-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ve-dark);
+    margin: 0;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--ve-border);
+    background: var(--ve-dark);
+    color: #fff;
+}
+
+.pf-map-count {
+    display: inline-block;
+    background: var(--ve-gold);
+    color: var(--ve-dark);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 10px;
+    margin-left: 6px;
+}
+
+.pf-map-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.pf-map-item {
+    border-bottom: 1px solid var(--ve-border);
+}
+
+.pf-map-item:last-child {
+    border-bottom: none;
+}
+
+.pf-map-item-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--ve-trans);
+}
+
+.pf-map-item-btn:hover,
+.pf-map-item-btn:focus {
+    background: rgba(212, 175, 55, 0.10);
+    outline: none;
+}
+
+.pf-map-item-btn strong {
+    display: block;
+    font-size: 15px;
+    color: var(--ve-dark);
+    margin-bottom: 5px;
+}
+
+.pf-map-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--ve-text);
+}
+
+.pf-map-item-type {
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--ve-dark);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.pf-map-distance {
+    color: var(--ve-gold);
+    font-weight: 800;
+}
+
+/* Fenêtres (popups) des marqueurs */
+.pf-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 210px;
+}
+
+.pf-popup-titre {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ve-dark);
+}
+
+.pf-popup-type {
+    align-self: flex-start;
+    background: rgba(212, 175, 55, 0.16);
+    color: var(--ve-dark);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.pf-popup-meta {
+    font-size: 13px;
+    color: #555;
+}
+
+.pf-popup-badge {
+    align-self: flex-start;
+    background: rgba(40, 167, 69, 0.15);
+    color: #1e7e34;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.pf-popup-liens {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--ve-border);
+}
+
+.pf-popup-liens a {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ve-gold);
+    text-decoration: none;
+}
+
+.pf-popup-liens a:hover {
+    text-decoration: underline;
+}
+
+/* --- Responsive : carte interactive --- */
+@media (max-width: 991px) {
+    .pf-map-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .pf-map-side {
+        height: auto;
+        max-height: 420px;
+    }
+}
+
+@media (max-width: 640px) {
+    .pf-map-canvas {
+        height: 400px;
+    }
+
+    .pf-map-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pf-map-filter select {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .pf-map-toolbar .ve-btn-primary,
+    .pf-map-back {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+}

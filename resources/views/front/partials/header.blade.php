@@ -20,8 +20,15 @@
 
                 <li>
                     <a href="{{ route('points-fraicheur.index') }}"
-                       class="{{ request()->routeIs('points-fraicheur.*') ? 'active' : '' }}">
+                       class="{{ request()->routeIs('points-fraicheur.index', 'points-fraicheur.show') ? 'active' : '' }}">
                         Points de fraîcheur
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('points-fraicheur.carte') }}"
+                       class="{{ request()->routeIs('points-fraicheur.carte') ? 'active' : '' }}">
+                        Carte
                     </a>
                 </li>
 
@@ -78,8 +85,15 @@
 
             <li>
                 <a href="{{ route('points-fraicheur.index') }}"
-                   class="{{ request()->routeIs('points-fraicheur.*') ? 'active' : '' }}">
+                   class="{{ request()->routeIs('points-fraicheur.index', 'points-fraicheur.show') ? 'active' : '' }}">
                     Points de fraîcheur
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('points-fraicheur.carte') }}"
+                   class="{{ request()->routeIs('points-fraicheur.carte') ? 'active' : '' }}">
+                    Carte
                 </a>
             </li>
 
