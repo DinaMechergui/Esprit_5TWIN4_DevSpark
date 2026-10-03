@@ -13,6 +13,8 @@
 */
 
 use App\BackOffice\Controllers\DashboardController;
+use App\BackOffice\Controllers\PointFraicheurController;
+use App\BackOffice\Controllers\TypePointController;
 use App\BackOffice\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,11 +25,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Gestion des utilisateurs (tâche commune à l'équipe).
     Route::resource('users', UserController::class);
 
-    /*
-    | Module « Points de fraîcheur » (CRUD à créer par l'équipe) :
-    |
-    | Route::resource('points-fraicheur', PointFraicheurController::class)
-    |     ->except(['show'])
-    |     ->parameters(['points-fraicheur' => 'pointFraicheur']);
-    */
+    // Module « Points de fraîcheur » : les types de points (parent).
+    Route::resource('types-point', TypePointController::class)
+        ->parameters(['types-point' => 'typePoint']);
+
+    // Module « Points de fraîcheur » : les points (enfant).
+    Route::resource('points-fraicheur', PointFraicheurController::class)
+        ->parameters(['points-fraicheur' => 'pointFraicheur']);
 });
