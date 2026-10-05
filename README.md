@@ -248,8 +248,9 @@ C:\laravel project\
 | GET     | `/`                   | `front.home`      | `routes/front.php` | Accueil (public)         |
 | GET     | `/login`, `/register` | `login`,`register`| `routes/auth.php`  | Authentification (public) |
 | GET     | `/profile`            | `profile.edit`    | `routes/front.php` | Profil (connecté)         |
-| GET     | `/points-fraicheur`   | `points-fraicheur.index` | `routes/front.php` | Liste des points (public) |
-| GET     | `/points-fraicheur/carte` | `points-fraicheur.carte` | `routes/front.php` | Carte interactive (public) |
+| GET     | `/points-fraicheur`   | `points-fraicheur.index` | `routes/front.php` | Liste + carte intégrée (public) |
+| GET     | `/points-fraicheur?vue=carte` | `points-fraicheur.index` | `routes/front.php` | Ouvre la même page en mode carte |
+| GET     | `/points-fraicheur/carte` | `points-fraicheur.carte` | `routes/front.php` | Carte plein écran (public) |
 | GET     | `/points-fraicheur/proches` | `points-fraicheur.proches` | `routes/front.php` | Points proches, JSON (public) |
 | GET     | `/points-fraicheur/{pointFraicheur}` | `points-fraicheur.show` | `routes/front.php` | Détail du point (public) |
 | GET     | `/admin`              | `admin.dashboard` | `routes/back.php`  | Tableau de bord (admin)   |
@@ -264,45 +265,59 @@ C:\laravel project\
 
 ## Valeur ajoutée du module Points de fraîcheur
 
-**Carte interactive avec géolocalisation « Près de moi ».**
-La page `/points-fraicheur/carte` affiche tous les points sur une carte
-Leaflet + OpenStreetMap (fichiers Leaflet servis **en local** dans
+**Explorateur unique : liste + carte interactive sur la même page.**
+La page `/points-fraicheur` affiche la liste des points à gauche et la carte
+Leaflet + OpenStreetMap à droite (fichiers Leaflet servis **en local** dans
 `public/assets/front/vendor/leaflet/`, aucune clé API, seules les tuiles
-proviennent d'Internet). Au clic sur un marqueur, une fenêtre affiche le nom,
-le type, l'adresse, les horaires, le badge « Accessible » ainsi que deux liens :
+proviennent d'Internet). La carte reçoit **tous les points filtrés** (sans
+pagination) pour donner la vue d'ensemble pendant que la liste n'affiche
+qu'une page. Au clic sur un marqueur, une fenêtre affiche le nom, le type,
+l'adresse, les horaires, le badge « Accessible » ainsi que deux liens :
 « Détails » (page du point) et « Itinéraire » (OSRM à pied, nouvel onglet).
 
+- **Synchronisation liste ↔ carte** : chaque fiche porte un bouton
+  **« Localiser »** qui recentre la carte (zoom 16), ouvre la fenêtre du
+  marqueur et met la fiche en surbrillance ; inversement, cliquer un marqueur
+  surligne et fait défiler la fiche correspondante.
+- **Bascule Liste / Carte** : sur mobile, un sélecteur n'affiche qu'une des
+  deux vues ; l'état est conservé dans l'URL (`?vue=carte`). Sur desktop, les
+  deux colonnes sont visibles et la carte reste collante (`position: sticky`)
+  pendant le défilement de la liste.
 - Bouton **« Près de moi »** : le navigateur fournit la position, la carte se
-  centre dessus (marqueur « Vous êtes ici ») et la liste latérale affiche les
-  points **triés du plus proche au plus éloigné** avec la distance en km
-  (1 décimale). Un clic sur un élément centre la carte et ouvre la fenêtre.
-  Refus de la permission / position indisponible / délai dépassé : message en
-  français affiché dans la page (jamais d'`alert()`).
-- **Filtre par type** : masque les marqueurs et la liste sans rechargement.
-- **Lien « Carte »** dans le menu front (état actif) et bouton **« Voir sur la
-  carte »** sur la page détail : `/points-fraicheur/carte?point={id}` ouvre la
-  carte centrée sur ce point (zoom 16).
+  centre dessus (marqueur « Vous êtes ici ») et **les distances en km
+  (1 décimale) s'ajoutent dans les fenêtres des marqueurs**. Refus de la
+  permission / position indisponible / délai dépassé : message en français
+  affiché dans la page (jamais d'`alert()`).
+- **Lien « Carte »** du menu front → `/points-fraicheur?vue=carte` : la
+  **même page** s'ouvre en mode carte (état actif sur le menu) ; bouton
+  **« Voir sur la carte »** sur la page détail → `/points-fraicheur?point={id}`
+  ouvre la carte centrée sur ce point (zoom 16). La route
+  `/points-fraicheur/carte` reste disponible en **plein écran** (bouton
+  « Plein écran » de la carte intégrée).
+- **Les filtres (recherche + type) pilotent la liste et la carte** : la carte
+  est construite avec les mêmes critères que la liste paginée.
 - Côté serveur, le scope `PointFraicheur::lesPlusProches()` calcule la distance
   en SQL avec la **formule de Haversine** (rayon 6371 km, bindings SQL, protection
   `LEAST(1, GREATEST(-1, ...))` autour de `acos()`).
 
 | Méthode | URI                                      | Nom                          | Description                                      |
 |---------|------------------------------------------|------------------------------|--------------------------------------------------|
-| GET     | `/points-fraicheur/carte`                | `points-fraicheur.carte`     | Carte Leaflet, filtre, géolocalisation (public)  |
+| GET     | `/points-fraicheur`                      | `points-fraicheur.index`     | Liste + carte intégrée, filtres, `?vue=carte`, `?point={id}` (public) |
+| GET     | `/points-fraicheur/carte`                | `points-fraicheur.carte`     | Carte Leaflet plein écran, filtre, géolocalisation (public)  |
 | GET     | `/points-fraicheur/proches?lat=&lng=&limit=` | `points-fraicheur.proches` | JSON des points triés par distance (public, 422 si coordonnées invalides) |
 
 **Scénario de démonstration en 5 étapes**
 
-1. L'habitant ouvre le menu **Carte** : les 30 points de fraîcheur s'affichent
-   sur la carte, la vue englobe tous les marqueurs.
-2. Il choisit **Type de point → Plage** : seules les plages de la côte restent
-   visibles, la carte et la liste se mettent à jour sans rechargement.
+1. L'habitant ouvre le menu **Carte** : la page « Points de fraîcheur » s'ouvre
+   en mode carte, les 30 points s'affichent sur la carte intégrée.
+2. Il choisit **Type de point → Plage** puis **Filtrer** : la liste et la carte
+   n'affichent plus que les plages de la côte.
 3. Il clique sur **Près de moi** et autorise la géolocalisation : la carte se
-   centre sur sa position (marqueur « Vous êtes ici ») et la liste affiche les
-   distances en km, du plus proche au plus éloigné.
-4. Il clique sur un point de la liste : la carte se recentre (zoom 16) et la
-   fenêtre du marqueur s'ouvre ; il clique sur **Détails** pour voir la fiche
-   complète du point.
+   centre sur sa position (marqueur « Vous êtes ici ») et les distances en km
+   apparaissent dans les fenêtres des marqueurs.
+4. Il clique sur **Localiser** d'une fiche (ou sur un marqueur) : la carte se
+   recentre (zoom 16), la fenêtre s'ouvre et la fiche est surlignée ; il clique
+   sur **Détails** pour voir la fiche complète du point.
 5. Sur la fiche, il clique sur **Itinéraire** : OpenStreetMap s'ouvre dans un
    nouvel onglet avec l'itinéraire à pied jusqu'au point de fraîcheur.
 
@@ -322,10 +337,11 @@ le type, l'adresse, les horaires, le badge « Accessible » ainsi que deux liens
 php artisan test
 ```
 
-55 tests (182 assertions) — SQLite en mémoire (`phpunit.xml`).
+56 tests (188 assertions) — SQLite en mémoire (`phpunit.xml`).
 `tests/Feature/PointsFraicheurTest.php` couvre la consultation publique, le filtre
-par type, la recherche, la pagination, les accès (invité / utilisateur / admin),
-la validation et le refus de suppression d'un type avec points.
+par type, la recherche, la pagination, la carte intégrée à la page de liste,
+les accès (invité / utilisateur / admin), la validation et le refus de
+suppression d'un type avec points.
 `tests/Feature/PointsFraicheurCarteTest.php` couvre la page carte, le tri par
 distance de la route `proches` (Haversine) et la réponse 422 des coordonnées
 invalides.

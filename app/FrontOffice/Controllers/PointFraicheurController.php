@@ -5,6 +5,7 @@ namespace App\FrontOffice\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\PointFraicheur;
 use App\Models\TypePoint;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,30 +17,23 @@ use Illuminate\View\View;
 class PointFraicheurController extends Controller
 {
     /**
-     * Liste des points de fraîcheur (filtre par type + recherche, 9 par page).
+     * Liste des points de fraîcheur (filtre par type + recherche, 9 par page)
+     * avec la carte interactive intégrée à la même page.
      */
     public function index(Request $request): View
     {
-        $search = $request->query('search');
-        $type = $request->query('type');
-
-        $points = PointFraicheur::query()
-            // Chargement du type pour éviter le problème du N+1.
-            ->with('type')
-            // Filtre sur le type de point.
-            ->when($type, function ($query, $type) {
-                $query->where('type_point_id', $type);
-            })
-            // Recherche sur le nom ou l'adresse.
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('nom', 'like', "%{$search}%")
-                        ->orWhere('adresse', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy('nom')
+        // Paginé : affichage de la liste.
+        $points = $this->requeteFiltree($request)
             ->paginate(9)
             ->withQueryString();
+
+        // Sans pagination : tous les points filtrés pour la carte intégrée,
+        // afin que la carte donne la vue d'ensemble pendant que la liste
+        // n'affiche qu'une page.
+        $pointsCarte = $this->requeteFiltree($request)
+            ->get()
+            ->map(fn (PointFraicheur $point) => $this->versDonneeCarte($point))
+            ->values();
 
         $types = TypePoint::withCount('points')
             ->orderBy('nom')
@@ -47,14 +41,15 @@ class PointFraicheurController extends Controller
 
         return view('front.points-fraicheur.index', [
             'points' => $points,
+            'pointsCarte' => $pointsCarte,
             'types' => $types,
-            'search' => $search,
-            'selectedType' => $types->firstWhere('id', $type),
+            'search' => $request->query('search'),
+            'selectedType' => $types->firstWhere('id', $request->query('type')),
         ]);
     }
 
     /**
-     * Carte interactive des points de fraîcheur (Leaflet + OpenStreetMap).
+     * Carte interactive plein écran des points de fraîcheur (Leaflet + OSM).
      */
     public function carte(): View
     {
@@ -63,18 +58,7 @@ class PointFraicheurController extends Controller
             ->with('type')
             ->orderBy('nom')
             ->get()
-            ->map(fn (PointFraicheur $point) => [
-                'id' => $point->id,
-                'nom' => $point->nom,
-                'type' => $point->type?->nom,
-                'type_id' => $point->type_point_id,
-                'adresse' => $point->adresse,
-                'lat' => (float) $point->latitude,
-                'lng' => (float) $point->longitude,
-                'horaires' => $point->horaires,
-                'accessible' => (bool) $point->accessible,
-                'url' => route('points-fraicheur.show', $point),
-            ])
+            ->map(fn (PointFraicheur $point) => $this->versDonneeCarte($point))
             ->values();
 
         // Types de points pour le filtre de la carte (sans rechargement).
@@ -122,19 +106,13 @@ class PointFraicheurController extends Controller
             ->lesPlusProches($lat, $lng)
             ->limit($limit)
             ->get()
-            ->map(fn (PointFraicheur $point) => [
-                'id' => $point->id,
-                'nom' => $point->nom,
-                'type' => $point->type?->nom,
-                'type_id' => $point->type_point_id,
-                'lat' => (float) $point->latitude,
-                'lng' => (float) $point->longitude,
-                'horaires' => $point->horaires,
-                'accessible' => (bool) $point->accessible,
-                'url' => route('points-fraicheur.show', $point),
+            ->map(function (PointFraicheur $point) {
+                $donnees = $this->versDonneeCarte($point);
                 // Distance en km, arrondie à 1 décimale.
-                'distance' => round((float) $point->distance, 1),
-            ])
+                $donnees['distance'] = round((float) $point->distance, 1);
+
+                return $donnees;
+            })
             ->values();
 
         return response()->json(['points' => $points]);
@@ -148,5 +126,51 @@ class PointFraicheurController extends Controller
         return view('front.points-fraicheur.show', [
             'point' => $pointFraicheur->load('type'),
         ]);
+    }
+
+    /**
+     * Requête filtrée (type + recherche) partagée par la liste et la carte.
+     */
+    private function requeteFiltree(Request $request): Builder
+    {
+        $search = $request->query('search');
+        $type = $request->query('type');
+
+        return PointFraicheur::query()
+            // Chargement du type pour éviter le problème du N+1.
+            ->with('type')
+            // Filtre sur le type de point.
+            ->when($type, function ($query, $type) {
+                $query->where('type_point_id', $type);
+            })
+            // Recherche sur le nom ou l'adresse.
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('nom', 'like', "%{$search}%")
+                        ->orWhere('adresse', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('nom');
+    }
+
+    /**
+     * Format JSON partagé par la liste latérale, la carte et « proches ».
+     *
+     * @return array<string, mixed>
+     */
+    private function versDonneeCarte(PointFraicheur $point): array
+    {
+        return [
+            'id' => $point->id,
+            'nom' => $point->nom,
+            'type' => $point->type?->nom,
+            'type_id' => $point->type_point_id,
+            'adresse' => $point->adresse,
+            'lat' => (float) $point->latitude,
+            'lng' => (float) $point->longitude,
+            'horaires' => $point->horaires,
+            'accessible' => (bool) $point->accessible,
+            'url' => route('points-fraicheur.show', $point),
+        ];
     }
 }

@@ -82,6 +82,23 @@ class PointsFraicheurTest extends TestCase
             ->assertSee('page=2', false);
     }
 
+    public function test_front_index_embeds_interactive_map_in_same_page(): void
+    {
+        PointFraicheur::factory()->create(['nom' => 'Parc de la Citadelle']);
+
+        // La carte interactive est intégrée à la page de liste.
+        $this->get('/points-fraicheur')
+            ->assertOk()
+            ->assertSee('pf-explorer')
+            ->assertSee('pf-map-embed')
+            ->assertSee('vue=carte', false);
+
+        // Le lien « Carte » du menu ouvre la même page en mode carte.
+        $this->get('/points-fraicheur?vue=carte')
+            ->assertOk()
+            ->assertSee('data-vue="carte"', false);
+    }
+
     public function test_front_show_displays_point_details(): void
     {
         $point = PointFraicheur::factory()->create([

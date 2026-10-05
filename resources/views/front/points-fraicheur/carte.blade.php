@@ -1,7 +1,7 @@
 @extends('front.layouts.front')
 
-@section('title', 'Carte des points de fraîcheur')
-@section('description', 'Carte interactive des points de fraîcheur du quartier : parcs, salles climatisées et fontaines, avec géolocalisation « Près de moi ».')
+@section('title', 'Carte des points de fraîcheur (plein écran)')
+@section('description', 'Carte interactive plein écran des points de fraîcheur du quartier : parcs, salles climatisées et plages, avec géolocalisation « Près de moi ».')
 
 {{-- Styles de Leaflet (fichiers servis localement, pas de CDN) --}}
 @push('styles')
@@ -13,7 +13,7 @@
         <div class="container">
             {{-- En-tête de section --}}
             <div class="ve-section-header text-center">
-                <span class="ve-section-tag">Carte interactive</span>
+                <span class="ve-section-tag">Carte plein écran</span>
                 <h2>Tous les points de fraîcheur <span>sur la carte</span></h2>
                 <p>
                     Cliquez sur un marqueur pour voir les détails, filtrez par type

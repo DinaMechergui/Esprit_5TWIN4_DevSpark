@@ -919,3 +919,224 @@
         text-align: center;
     }
 }
+
+/* --- Explorateur liste + carte (page Points de fraicheur) --- */
+.pf-views {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 auto 26px;
+    grid-column: 1 / -1;
+}
+
+.pf-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border: 1px solid var(--ve-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ve-dark);
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--ve-trans);
+}
+
+.pf-view-btn:hover {
+    border-color: var(--ve-gold);
+    color: var(--ve-gold);
+}
+
+.pf-view-btn[aria-pressed="true"] {
+    background: var(--ve-dark);
+    border-color: var(--ve-dark);
+    color: var(--ve-gold);
+}
+
+.pf-explorer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+    gap: 26px;
+    align-items: start;
+}
+
+.pf-explorer-colonne {
+    min-width: 0;
+}
+
+.pf-explorer .pf-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.pf-explorer .pf-card.is-active {
+    border-color: var(--ve-gold);
+    box-shadow: 0 18px 34px rgba(212, 175, 55, 0.25);
+    transform: translateY(-6px);
+}
+
+/* Carte encastree dans la page de liste */
+.pf-carte-encart {
+    position: sticky;
+    top: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.pf-carte-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--ve-border);
+    border-radius: var(--ve-radius);
+    padding: 12px 14px;
+}
+
+.pf-carte-compte {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ve-dark);
+}
+
+.pf-carte-compte i {
+    color: var(--ve-gold);
+}
+
+.pf-carte-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border: 1px solid var(--ve-dark);
+    border-radius: 8px;
+    background: var(--ve-dark);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--ve-trans);
+}
+
+.pf-carte-action:hover,
+.pf-carte-action:focus {
+    background: var(--ve-gold);
+    border-color: var(--ve-gold);
+    color: var(--ve-dark);
+}
+
+.pf-carte-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pf-carte-encart .pf-map-message {
+    max-width: none;
+    margin: 0;
+    text-align: left;
+}
+
+.pf-carte-canvas {
+    height: 520px;
+    border: 1px solid var(--ve-border);
+    border-radius: var(--ve-radius);
+    overflow: hidden;
+    background: #e6e9ee;
+    z-index: 0;
+}
+
+/* Bouton "Localiser" sur une fiche de la liste */
+.pf-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.pf-card-locate {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--ve-border);
+    border-radius: 20px;
+    background: #fff;
+    color: var(--ve-text);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--ve-trans);
+}
+
+.pf-card-locate i {
+    color: var(--ve-gold);
+}
+
+.pf-card-locate:hover {
+    border-color: var(--ve-gold);
+    color: var(--ve-gold);
+}
+
+/* --- Responsive : explorateur liste + carte --- */
+@media (max-width: 991px) {
+    .pf-explorer {
+        grid-template-columns: 1fr;
+    }
+
+    .pf-explorer[data-vue="liste"] .pf-carte-encart {
+        display: none;
+    }
+
+    .pf-explorer[data-vue="carte"] .pf-explorer-colonne {
+        display: none;
+    }
+
+    .pf-carte-encart {
+        position: static;
+    }
+
+    .pf-carte-canvas {
+        height: 420px;
+    }
+}
+
+@media (max-width: 640px) {
+    .pf-views {
+        width: 100%;
+    }
+
+    .pf-view-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .pf-carte-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pf-carte-action {
+        justify-content: center;
+    }
+
+    .pf-carte-canvas {
+        height: 360px;
+    }
+
+    .pf-explorer .pf-card-footer {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
