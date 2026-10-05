@@ -18,14 +18,12 @@
                     </a>
                 </li>
 
-                {{-- Module « Points de fraîcheur » : lien à activer quand les routes seront créées
                 <li>
                     <a href="{{ route('points-fraicheur.index') }}"
-                       class="{{ request()->routeIs('points-fraicheur.*') ? 'active' : '' }}">
+                       class="{{ request()->routeIs('points-fraicheur.index', 'points-fraicheur.show') ? 'active' : '' }}">
                         Points de fraîcheur
                     </a>
                 </li>
-                --}}
 
                 @auth
                     <li>
@@ -78,9 +76,12 @@
                 </a>
             </li>
 
-            {{-- Module « Points de fraîcheur » : lien à activer quand les routes seront créées
-            <li><a href="{{ route('points-fraicheur.index') }}">Points de fraîcheur</a></li>
-            --}}
+            <li>
+                <a href="{{ route('points-fraicheur.index') }}"
+                   class="{{ request()->routeIs('points-fraicheur.index', 'points-fraicheur.show') ? 'active' : '' }}">
+                    Points de fraîcheur
+                </a>
+            </li>
 
             @guest
                 <li><a href="{{ route('login') }}">Connexion</a></li>

@@ -34,5 +34,8 @@ class DatabaseSeeder extends Seeder
 
         // Utilisateurs aléatoires.
         User::factory(10)->create();
+
+        // Module « Points de fraîcheur » : les types avant leurs points.
+        $this->call([TypePointSeeder::class, PointFraicheurSeeder::class]);
     }
 }
