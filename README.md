@@ -238,28 +238,3 @@ C:\laravel project\
 Éléments volontairement partagés : `app/Models`, `app/Support/AuthRedirect.php`,
 `app/Http/Controllers/Controller.php`, `resources/views/components/`,
 `resources/views/errors/` (Laravel résout `errors.403` à cet emplacement).
-
----
-
-## Routes principales
-
-| Méthode | URI                   | Nom               | Fichier          | Description                |
-|---------|-----------------------|-------------------|------------------|----------------------------|
-| GET     | `/`                   | `front.home`      | `routes/front.php` | Accueil (public)         |
-| GET     | `/login`, `/register` | `login`,`register`| `routes/auth.php`  | Authentification (public) |
-| GET     | `/profile`            | `profile.edit`    | `routes/front.php` | Profil (connecté)         |
-| GET     | `/points-fraicheur`   | `points-fraicheur.index` | `routes/front.php` | Onglets liste/carte intégrés (public) |
-| GET     | `/points-fraicheur?vue=carte` | `points-fraicheur.index` | `routes/front.php` | Ouvre la même page en mode carte |
-| GET     | `/points-fraicheur/carte` | `points-fraicheur.carte` | `routes/front.php` | Carte plein écran (public) |
-| GET     | `/points-fraicheur/proches` | `points-fraicheur.proches` | `routes/front.php` | Points proches, JSON (public) |
-| GET     | `/points-fraicheur/{pointFraicheur}` | `points-fraicheur.show` | `routes/front.php` | Détail du point (public) |
-| GET     | `/admin`              | `admin.dashboard` | `routes/back.php`  | Tableau de bord (admin)   |
-| *       | `/admin/users`        | `admin.users.*`   | `routes/back.php`  | CRUD utilisateurs (admin) |
-| *       | `/admin/types-point`  | `admin.types-point.*` | `routes/back.php`  | CRUD types de point (admin) |
-| *       | `/admin/points-fraicheur` | `admin.points-fraicheur.*` | `routes/back.php` | CRUD points (admin) |
-
-- Le middleware `admin` (`app/BackOffice/Middleware/AdminMiddleware.php`, alias déclaré
-  dans `bootstrap/app.php`) renvoie **403** aux non-administrateurs.
-- Après connexion, un administrateur est dirigé vers `/admin`, un utilisateur vers `/`
-  (voir `app/Support/AuthRedirect.php`).
-
