@@ -91,9 +91,9 @@ class PointsFraicheurTest extends TestCase
             ->assertOk()
             ->assertSee('pf-explorer')
             ->assertSee('pf-map-embed')
-            ->assertSee('vue=carte', false);
+            ->assertSee('data-vue="liste"', false);
 
-        // Le lien « Carte » du menu ouvre la même page en mode carte.
+        // La page s'ouvre en mode carte avec le paramètre ?vue=carte.
         $this->get('/points-fraicheur?vue=carte')
             ->assertOk()
             ->assertSee('data-vue="carte"', false);

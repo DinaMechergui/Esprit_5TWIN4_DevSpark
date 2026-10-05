@@ -58,14 +58,26 @@
                 id="pf-explorer"
                 data-vue="{{ request('vue') === 'carte' ? 'carte' : 'liste' }}"
             >
-                {{-- Bascule liste / carte (utile surtout sur mobile) --}}
-                <div class="pf-views" role="group" aria-label="Mode d'affichage">
-                    <button type="button" class="pf-view-btn" data-vue="liste">
+                {{-- Onglets liste / carte : une seule vue à la fois --}}
+                <div class="pf-views" role="tablist" aria-label="Mode d'affichage">
+                    <button
+                        type="button"
+                        class="pf-view-btn"
+                        role="tab"
+                        data-vue="liste"
+                        aria-selected="{{ request('vue') === 'carte' ? 'false' : 'true' }}"
+                    >
                         <i class="fa fa-list" aria-hidden="true"></i> Liste
                     </button>
 
                     @if ($pointsCarte->isNotEmpty())
-                        <button type="button" class="pf-view-btn" data-vue="carte">
+                        <button
+                            type="button"
+                            class="pf-view-btn"
+                            role="tab"
+                            data-vue="carte"
+                            aria-selected="{{ request('vue') === 'carte' ? 'true' : 'false' }}"
+                        >
                             <i class="fa fa-map-o" aria-hidden="true"></i> Carte
                         </button>
                     @endif
@@ -175,13 +187,14 @@
             var encart = document.getElementById('pf-carte');
             var boutonsVue = explorateur.querySelectorAll('.pf-view-btn');
             var carte = null;
+            var vueAjustee = false;
 
             /** Passe en mode liste ou carte (et met l'URL à jour). */
             function activerVue(vue, mettreUrl) {
                 explorateur.setAttribute('data-vue', vue);
 
                 boutonsVue.forEach(function (bouton) {
-                    bouton.setAttribute('aria-pressed', String(bouton.getAttribute('data-vue') === vue));
+                    bouton.setAttribute('aria-selected', String(bouton.getAttribute('data-vue') === vue));
                 });
 
                 if (mettreUrl) {
@@ -197,20 +210,35 @@
                 }
 
                 if (vue === 'carte' && encart) {
-                    var mobile = window.matchMedia('(max-width: 991px)').matches;
-
                     encart.scrollIntoView({
                         behavior: 'smooth',
-                        block: mobile ? 'start' : 'nearest'
+                        block: window.matchMedia('(max-width: 991px)').matches ? 'start' : 'nearest'
                     });
 
-                    // La carte était peut-être affichée avec une taille nulle.
+                    // La carte était masquée : il faut recalculer sa taille,
+                    // puis ajuster la vue sur les marqueurs si ce n'est pas fait.
                     if (carte) {
                         window.setTimeout(function () {
                             carte.invalidateSize();
+                            ajusterVueCarte();
                         }, 220);
                     }
                 }
+            }
+
+            /** Cadre la carte sur l'ensemble des marqueurs (une seule fois). */
+            function ajusterVueCarte() {
+                var zoneCarte = document.getElementById('pf-map-embed');
+
+                // Carte masquée (onglet Liste) : on réessaiera à l'activation.
+                if (vueAjustee || !carte || !entrees.length || !zoneCarte || zoneCarte.offsetWidth === 0) {
+                    return;
+                }
+
+                vueAjustee = true;
+                carte.fitBounds(entrees.map(function (entree) {
+                    return [entree.point.lat, entree.point.lng];
+                }), { padding: [30, 30] });
             }
 
             boutonsVue.forEach(function (bouton) {
@@ -350,6 +378,7 @@
             /** Centre la carte sur un point et ouvre sa fenêtre. */
             function centrerSurPoint(point) {
                 activerVue('carte', false);
+                vueAjustee = true;
                 carte.setView([point.lat, point.lng], 16);
 
                 entrees.forEach(function (entree) {
@@ -367,7 +396,8 @@
                 marqueur.on('click', function () {
                     var fiche = surlignerFiche(point.id);
 
-                    if (fiche && !window.matchMedia('(max-width: 991px)').matches) {
+                    // La fiche n'est défilée que si l'onglet Liste est affiché.
+                    if (fiche && explorateur.getAttribute('data-vue') === 'liste') {
                         fiche.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
                 });
@@ -418,6 +448,7 @@
 
                     marqueurUtilisateur = L.marker([lat, lng]).addTo(carte);
                     marqueurUtilisateur.bindPopup('<strong>Vous êtes ici</strong>').openPopup();
+                    vueAjustee = true;
                     carte.setView([lat, lng], 14);
 
                     fetch(urlProches + '?lat=' + encodeURIComponent(lat) + '&lng=' + encodeURIComponent(lng))
@@ -487,14 +518,15 @@
 
             if (entreeCiblee) {
                 activerVue('carte', false);
+                vueAjustee = true;
                 carte.setView([entreeCiblee.point.lat, entreeCiblee.point.lng], 16);
                 entreeCiblee.marqueur.openPopup();
                 surlignerFiche(entreeCiblee.point.id);
-            } else if (entrees.length > 0) {
-                // Ajustement de la vue sur l'ensemble des marqueurs.
-                carte.fitBounds(entrees.map(function (entree) {
-                    return [entree.point.lat, entree.point.lng];
-                }), { padding: [30, 30] });
+            } else {
+                // Onglet Carte affiché : ajustement immédiat. Onglet Liste :
+                // différé jusqu'à la première activation de l'onglet Carte
+                // (fitBounds sur un conteneur masqué serait invalide).
+                ajusterVueCarte();
             }
         });
     </script>

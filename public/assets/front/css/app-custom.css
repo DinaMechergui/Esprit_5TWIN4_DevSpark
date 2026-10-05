@@ -920,20 +920,20 @@
     }
 }
 
-/* --- Explorateur liste + carte (page Points de fraicheur) --- */
+
+/* --- Explorateur a onglets : liste OU carte (page Points de fraicheur) --- */
 .pf-views {
     display: flex;
     justify-content: center;
     gap: 8px;
     margin: 0 auto 26px;
-    grid-column: 1 / -1;
 }
 
 .pf-view-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 11px 22px;
+    padding: 11px 26px;
     border: 1px solid var(--ve-border);
     border-radius: 8px;
     background: #fff;
@@ -950,38 +950,22 @@
     color: var(--ve-gold);
 }
 
-.pf-view-btn[aria-pressed="true"] {
+.pf-view-btn[aria-selected="true"] {
     background: var(--ve-dark);
     border-color: var(--ve-dark);
     color: var(--ve-gold);
 }
 
-.pf-explorer {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
-    gap: 26px;
-    align-items: start;
+/* Une seule vue a la fois : liste OU carte, tous les ecrans. */
+.pf-explorer[data-vue="liste"] .pf-carte-encart {
+    display: none;
 }
 
-.pf-explorer-colonne {
-    min-width: 0;
+.pf-explorer[data-vue="carte"] .pf-explorer-colonne {
+    display: none;
 }
 
-.pf-explorer .pf-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-}
-
-.pf-explorer .pf-card.is-active {
-    border-color: var(--ve-gold);
-    box-shadow: 0 18px 34px rgba(212, 175, 55, 0.25);
-    transform: translateY(-6px);
-}
-
-/* Carte encastree dans la page de liste */
 .pf-carte-encart {
-    position: sticky;
-    top: 100px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -1049,7 +1033,7 @@
 }
 
 .pf-carte-canvas {
-    height: 520px;
+    height: 560px;
     border: 1px solid var(--ve-border);
     border-radius: var(--ve-radius);
     overflow: hidden;
@@ -1089,26 +1073,16 @@
     color: var(--ve-gold);
 }
 
-/* --- Responsive : explorateur liste + carte --- */
+.pf-explorer .pf-card.is-active {
+    border-color: var(--ve-gold);
+    box-shadow: 0 18px 34px rgba(212, 175, 55, 0.25);
+    transform: translateY(-6px);
+}
+
+/* --- Responsive : explorateur a onglets --- */
 @media (max-width: 991px) {
-    .pf-explorer {
-        grid-template-columns: 1fr;
-    }
-
-    .pf-explorer[data-vue="liste"] .pf-carte-encart {
-        display: none;
-    }
-
-    .pf-explorer[data-vue="carte"] .pf-explorer-colonne {
-        display: none;
-    }
-
-    .pf-carte-encart {
-        position: static;
-    }
-
     .pf-carte-canvas {
-        height: 420px;
+        height: 440px;
     }
 }
 
@@ -1132,7 +1106,7 @@
     }
 
     .pf-carte-canvas {
-        height: 360px;
+        height: 380px;
     }
 
     .pf-explorer .pf-card-footer {

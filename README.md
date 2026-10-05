@@ -248,7 +248,7 @@ C:\laravel project\
 | GET     | `/`                   | `front.home`      | `routes/front.php` | Accueil (public)         |
 | GET     | `/login`, `/register` | `login`,`register`| `routes/auth.php`  | Authentification (public) |
 | GET     | `/profile`            | `profile.edit`    | `routes/front.php` | Profil (connecté)         |
-| GET     | `/points-fraicheur`   | `points-fraicheur.index` | `routes/front.php` | Liste + carte intégrée (public) |
+| GET     | `/points-fraicheur`   | `points-fraicheur.index` | `routes/front.php` | Onglets liste/carte intégrés (public) |
 | GET     | `/points-fraicheur?vue=carte` | `points-fraicheur.index` | `routes/front.php` | Ouvre la même page en mode carte |
 | GET     | `/points-fraicheur/carte` | `points-fraicheur.carte` | `routes/front.php` | Carte plein écran (public) |
 | GET     | `/points-fraicheur/proches` | `points-fraicheur.proches` | `routes/front.php` | Points proches, JSON (public) |
@@ -265,35 +265,37 @@ C:\laravel project\
 
 ## Valeur ajoutée du module Points de fraîcheur
 
-**Explorateur unique : liste + carte interactive sur la même page.**
-La page `/points-fraicheur` affiche la liste des points à gauche et la carte
-Leaflet + OpenStreetMap à droite (fichiers Leaflet servis **en local** dans
+**Explorateur à onglets : liste OU carte, sur la même page.**
+La page `/points-fraicheur` propose deux onglets — **Liste** et **Carte** —
+qui n'affichent qu'une seule vue à la fois, **sur tous les écrans (desktop
+compris)**. L'onglet Carte affiche la carte Leaflet + OpenStreetMap en pleine
+largeur (fichiers Leaflet servis **en local** dans
 `public/assets/front/vendor/leaflet/`, aucune clé API, seules les tuiles
 proviennent d'Internet). La carte reçoit **tous les points filtrés** (sans
-pagination) pour donner la vue d'ensemble pendant que la liste n'affiche
-qu'une page. Au clic sur un marqueur, une fenêtre affiche le nom, le type,
-l'adresse, les horaires, le badge « Accessible » ainsi que deux liens :
-« Détails » (page du point) et « Itinéraire » (OSRM à pied, nouvel onglet).
+pagination) pendant que la liste reste paginée. Au clic sur un marqueur, une
+fenêtre affiche le nom, le type, l'adresse, les horaires, le badge
+« Accessible » ainsi que deux liens : « Détails » (page du point) et
+« Itinéraire » (OSRM à pied, nouvel onglet).
 
 - **Synchronisation liste ↔ carte** : chaque fiche porte un bouton
-  **« Localiser »** qui recentre la carte (zoom 16), ouvre la fenêtre du
-  marqueur et met la fiche en surbrillance ; inversement, cliquer un marqueur
-  surligne et fait défiler la fiche correspondante.
-- **Bascule Liste / Carte** : sur mobile, un sélecteur n'affiche qu'une des
-  deux vues ; l'état est conservé dans l'URL (`?vue=carte`). Sur desktop, les
-  deux colonnes sont visibles et la carte reste collante (`position: sticky`)
-  pendant le défilement de la liste.
+  **« Localiser »** qui bascule vers l'onglet Carte, recentre (zoom 16), ouvre
+  la fenêtre du marqueur et met la fiche en surbrillance ; inversement,
+  cliquer un marqueur surligne la fiche correspondante (visible au retour sur
+  l'onglet Liste).
+- **Onglets Liste / Carte** : un seul onglet visible à la fois (liste en
+  grille 3 colonnes, carte en pleine largeur) ; l'état est conservé dans
+  l'URL (`?vue=carte`) et exposé en sémantique d'onglets (`role="tablist"`,
+  `aria-selected`). Le menu front ne comporte que « Points de fraîcheur » :
+  l'onglet Carte se trouve dans la page.
 - Bouton **« Près de moi »** : le navigateur fournit la position, la carte se
   centre dessus (marqueur « Vous êtes ici ») et **les distances en km
   (1 décimale) s'ajoutent dans les fenêtres des marqueurs**. Refus de la
   permission / position indisponible / délai dépassé : message en français
   affiché dans la page (jamais d'`alert()`).
-- **Lien « Carte »** du menu front → `/points-fraicheur?vue=carte` : la
-  **même page** s'ouvre en mode carte (état actif sur le menu) ; bouton
-  **« Voir sur la carte »** sur la page détail → `/points-fraicheur?point={id}`
-  ouvre la carte centrée sur ce point (zoom 16). La route
-  `/points-fraicheur/carte` reste disponible en **plein écran** (bouton
-  « Plein écran » de la carte intégrée).
+- Bouton **« Voir sur la carte »** sur la page détail →
+  `/points-fraicheur?point={id}` ouvre l'onglet Carte centré sur ce point
+  (zoom 16). La route `/points-fraicheur/carte` reste disponible en
+  **plein écran** (bouton « Plein écran » de l'onglet Carte).
 - **Les filtres (recherche + type) pilotent la liste et la carte** : la carte
   est construite avec les mêmes critères que la liste paginée.
 - Côté serveur, le scope `PointFraicheur::lesPlusProches()` calcule la distance
@@ -302,14 +304,14 @@ l'adresse, les horaires, le badge « Accessible » ainsi que deux liens :
 
 | Méthode | URI                                      | Nom                          | Description                                      |
 |---------|------------------------------------------|------------------------------|--------------------------------------------------|
-| GET     | `/points-fraicheur`                      | `points-fraicheur.index`     | Liste + carte intégrée, filtres, `?vue=carte`, `?point={id}` (public) |
+| GET     | `/points-fraicheur`                      | `points-fraicheur.index`     | Onglets liste/carte intégrés, filtres, `?vue=carte`, `?point={id}` (public) |
 | GET     | `/points-fraicheur/carte`                | `points-fraicheur.carte`     | Carte Leaflet plein écran, filtre, géolocalisation (public)  |
 | GET     | `/points-fraicheur/proches?lat=&lng=&limit=` | `points-fraicheur.proches` | JSON des points triés par distance (public, 422 si coordonnées invalides) |
 
 **Scénario de démonstration en 5 étapes**
 
-1. L'habitant ouvre le menu **Carte** : la page « Points de fraîcheur » s'ouvre
-   en mode carte, les 30 points s'affichent sur la carte intégrée.
+1. L'habitant ouvre **Points de fraîcheur** puis l'onglet **Carte** : les 30
+   points s'affichent en pleine largeur sur la carte intégrée.
 2. Il choisit **Type de point → Plage** puis **Filtrer** : la liste et la carte
    n'affichent plus que les plages de la côte.
 3. Il clique sur **Près de moi** et autorise la géolocalisation : la carte se
