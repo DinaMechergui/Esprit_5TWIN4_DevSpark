@@ -65,8 +65,9 @@
                                 @forelse ($conseils as $conseil)
                                     <tr>
                                         <td>{{ $conseil->id }}</td>
-                                        <td>{{ $conseil->titre }}</td>
-                                    </tr>
+<td>
+    <a href="{{ route('admin.conseils.show', $conseil) }}">{{ $conseil->titre }}</a>
+</td>                                    </tr>
                                 @empty
                                     <tr>
                                         <td colspan="2" class="text-center text-muted py-4">
