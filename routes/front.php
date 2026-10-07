@@ -16,6 +16,7 @@ use App\FrontOffice\Controllers\HomeController;
 use App\FrontOffice\Controllers\CoupureController;
 use App\FrontOffice\Controllers\PointFraicheurController;
 use App\FrontOffice\Controllers\ProfileController;
+use App\Http\Controllers\Front\AlerteMeteoController as FrontAlerteMeteoController;
 use Illuminate\Support\Facades\Route;
 
 // Page d'accueil.
@@ -40,6 +41,12 @@ Route::get('/points-fraicheur/{pointFraicheur}', [PointFraicheurController::clas
 // Module « Coupures » : pages publiques.
 Route::get('/coupures', [CoupureController::class, 'index'])->name('coupures.index');
 Route::get('/coupures/{coupure}', [CoupureController::class, 'show'])->name('coupures.show');
+
+// Module « Alertes météo » : pages publiques.
+Route::get('/alertes-meteo', [FrontAlerteMeteoController::class, 'index'])
+    ->name('alertes-meteo.index');
+Route::get('/alertes-meteo/{id}', [FrontAlerteMeteoController::class, 'show'])
+    ->name('alertes-meteo.show');
 
 // Profil de l'utilisateur connecté.
 Route::middleware('auth')->group(function () {

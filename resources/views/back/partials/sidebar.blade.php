@@ -68,6 +68,22 @@
                 <div data-i18n="Coupures">Coupures</div>
             </a>
         </li>
+        {{-- Module « Alertes météo » --}}
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Alertes météo</span>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.niveaux-alerte.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.niveaux-alerte.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-signal-5"></i>
+                <div data-i18n="Niveaux d'alerte">Niveaux d'alerte</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.alertes-meteo.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.alertes-meteo.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-cloud-rain"></i>
+                <div data-i18n="Alertes météo">Alertes météo</div>
+            </a>
+        </li>
 
         {{-- Accès au site public --}}
         <li class="menu-header small text-uppercase">
