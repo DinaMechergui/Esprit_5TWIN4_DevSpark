@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    // Assistant IA du front office (OpenRouter) : la clé n'est lue que
+    // depuis .env et n'est jamais commitée (voir .gitignore).
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'openai/gpt-4o-mini'),
+        'url' => 'https://openrouter.ai/api/v1/chat/completions',
+    ],
+
 ];
