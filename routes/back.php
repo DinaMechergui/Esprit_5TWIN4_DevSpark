@@ -40,6 +40,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         ->parameters(['niveaux-alerte' => 'niveau_alerte']);
 
     // Module « Alertes météo » : les alertes météo (enfant).
+    Route::post('alertes-meteo/ai-generate', [BackAlerteMeteoController::class, 'aiGenerate'])
+        ->name('alertes-meteo.ai-generate');
     Route::resource('alertes-meteo', BackAlerteMeteoController::class)
         ->parameters(['alertes-meteo' => 'alerte_meteo']);
 });

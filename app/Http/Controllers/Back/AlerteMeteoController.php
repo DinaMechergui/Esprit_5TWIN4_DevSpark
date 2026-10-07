@@ -7,6 +7,8 @@ use App\Http\Requests\Back\StoreAlerteMeteoRequest;
 use App\Http\Requests\Back\UpdateAlerteMeteoRequest;
 use App\Models\AlerteMeteo;
 use App\Models\NiveauAlerte;
+use App\Services\AlerteAiService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -115,5 +117,19 @@ class AlerteMeteoController extends Controller
         return redirect()
             ->route('admin.alertes-meteo.index')
             ->with('success', 'L\'alerte météo a été supprimée avec succès.');
+    }
+
+    /**
+     * Génération de bulletin et recommandation de niveau par IA.
+     */
+    public function aiGenerate(Request $request, AlerteAiService $aiService): JsonResponse
+    {
+        $request->validate([
+            'prompt' => ['required', 'string', 'max:500'],
+        ]);
+
+        $result = $aiService->generateAlert($request->input('prompt'));
+
+        return response()->json($result);
     }
 }
