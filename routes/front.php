@@ -13,6 +13,7 @@
 
 use App\FrontOffice\Controllers\AssistantController;
 use App\FrontOffice\Controllers\HomeController;
+use App\FrontOffice\Controllers\CoupureController;
 use App\FrontOffice\Controllers\PointFraicheurController;
 use App\FrontOffice\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,10 @@ Route::get('/points-fraicheur/proches', [PointFraicheurController::class, 'proch
     ->name('points-fraicheur.proches');
 Route::get('/points-fraicheur/{pointFraicheur}', [PointFraicheurController::class, 'show'])
     ->name('points-fraicheur.show');
+
+// Module « Coupures » : pages publiques.
+Route::get('/coupures', [CoupureController::class, 'index'])->name('coupures.index');
+Route::get('/coupures/{coupure}', [CoupureController::class, 'show'])->name('coupures.show');
 
 // Profil de l'utilisateur connecté.
 Route::middleware('auth')->group(function () {

@@ -52,6 +52,23 @@
             </a>
         </li>
 
+        {{-- Module « Coupures » --}}
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Coupures</span>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.quartiers.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.quartiers.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-map"></i>
+                <div data-i18n="Quartiers">Quartiers</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.coupures.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.coupures.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-bolt-circle"></i>
+                <div data-i18n="Coupures">Coupures</div>
+            </a>
+        </li>
+
         {{-- Accès au site public --}}
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Site</span>
