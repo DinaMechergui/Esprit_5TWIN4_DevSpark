@@ -11,6 +11,7 @@
 |
 */
 
+use App\FrontOffice\Controllers\AssistantController;
 use App\FrontOffice\Controllers\HomeController;
 use App\FrontOffice\Controllers\PointFraicheurController;
 use App\FrontOffice\Controllers\ProfileController;
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 
 // Page d'accueil.
 Route::get('/', [HomeController::class, 'index'])->name('front.home');
+
+// Assistant IA (chatbot) : page publique + point d'entrée AJAX.
+Route::get('/assistant', [AssistantController::class, 'index'])->name('assistant.index');
+Route::post('/assistant', [AssistantController::class, 'chat'])->name('assistant.chat');
 
 // Module « Points de fraîcheur » : pages publiques.
 Route::get('/points-fraicheur', [PointFraicheurController::class, 'index'])
