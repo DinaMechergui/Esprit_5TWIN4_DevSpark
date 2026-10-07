@@ -53,6 +53,9 @@
                                 <p class="card-text text-muted">
                                     {{ \Illuminate\Support\Str::limit(strip_tags($conseil->contenu), 120) }}
                                 </p>
+                                                                <p class="small text-muted mb-2">
+                                    <i class="fa fa-clock-o" aria-hidden="true"></i> {{ $conseil->temps_lecture }} min de lecture
+                                </p>
                                 <a href="{{ route('conseils.show', $conseil) }}" class="mt-auto">
                                     Lire le conseil <i class="fa fa-angle-right" aria-hidden="true"></i>
                                 </a>

@@ -67,6 +67,50 @@
         </div>
     </div>
 
+    {{-- Module « Conseils » --}}
+    <div class="row">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="app-stat-card">
+                        <div class="app-stat-icon"><i class="bx bx-bulb"></i></div>
+                        <div>
+                            <div class="app-stat-value">{{ $conseilStats['categories'] }}</div>
+                            <div class="app-stat-label">Catégories de conseils</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="app-stat-card">
+                        <div class="app-stat-icon"><i class="bx bx-message-square-detail"></i></div>
+                        <div>
+                            <div class="app-stat-value">{{ $conseilStats['conseils'] }}</div>
+                            <div class="app-stat-label">Conseils publiés</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-12 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="app-stat-card">
+                        <div class="app-stat-icon"><i class="bx bx-trophy"></i></div>
+                        <div>
+                            <div class="app-stat-value">{{ $conseilStats['derniere_categorie']?->nom ?? '—' }}</div>
+                            <div class="app-stat-label">Catégorie la plus fournie</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         {{-- Derniers inscrits --}}
         <div class="col-lg-8 mb-4">

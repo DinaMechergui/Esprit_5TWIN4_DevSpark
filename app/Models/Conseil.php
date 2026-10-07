@@ -31,4 +31,11 @@ class Conseil extends Model
                ->orWhere('contenu', 'like', "%{$mot}%");
         }));
     }
+
+        // Valeur ajoutée : temps de lecture estimé en minutes (200 mots/minute, minimum 1).
+    // Utilisable dans les vues avec $conseil->temps_lecture.
+    public function getTempsLectureAttribute(): int
+    {
+        return max(1, (int) ceil(str_word_count(strip_tags($this->contenu)) / 100));
+    }
 }

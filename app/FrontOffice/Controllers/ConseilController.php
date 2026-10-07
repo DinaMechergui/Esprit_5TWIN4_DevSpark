@@ -31,12 +31,18 @@ class ConseilController extends Controller
             'selectedCategorie' => $categories->firstWhere('id', $request->query('categorie')),
         ]);
     }
-
-    // Page détail d'un conseil.
+    // Page détail d'un conseil + 3 conseils similaires (même catégorie).
     public function show(Conseil $conseil): View
     {
+        $similaires = Conseil::where('categorie_conseil_id', $conseil->categorie_conseil_id)
+            ->where('id', '!=', $conseil->id)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
         return view('front.conseils.show', [
             'conseil' => $conseil->load('categorie'),
+            'similaires' => $similaires,
         ]);
     }
 }

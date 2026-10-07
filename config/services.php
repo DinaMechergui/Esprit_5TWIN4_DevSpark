@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'openrouter/free'),
+        'ca_bundle' => storage_path('app/openrouter-ca.pem'),
+    ],
+
 ];

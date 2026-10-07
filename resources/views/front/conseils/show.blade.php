@@ -26,9 +26,12 @@
 
                             <h2 class="mb-3">{{ $conseil->titre }}</h2>
 
-                            <p class="text-muted small mb-4">
+                                                      <p class="text-muted small mb-4">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
                                 Publié le {{ $conseil->created_at?->format('d/m/Y') }}
+                                &nbsp;·&nbsp;
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                {{ $conseil->temps_lecture }} min de lecture
                             </p>
 
                             <div class="conseil-contenu">
@@ -36,7 +39,19 @@
                             </div>
                         </div>
                     </article>
-
+                    {{-- Conseils similaires (même catégorie) --}}
+                    @if ($similaires->isNotEmpty())
+                        <h4 class="mt-5 mb-3">Conseils similaires</h4>
+                        <div class="list-group">
+                            @foreach ($similaires as $similaire)
+                                <a href="{{ route('conseils.show', $similaire) }}"
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    {{ $similaire->titre }}
+                                    <small class="text-muted">{{ $similaire->temps_lecture }} min</small>
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
                     <div class="mt-4">
                         <a href="{{ route('conseils.index') }}" class="btn btn-outline-primary">
                             <i class="fa fa-arrow-left" aria-hidden="true"></i> Retour aux conseils
