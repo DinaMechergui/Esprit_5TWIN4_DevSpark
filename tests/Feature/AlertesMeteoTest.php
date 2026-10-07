@@ -287,4 +287,29 @@ class AlertesMeteoTest extends TestCase
             'id' => $niveau->id,
         ]);
     }
+
+    public function test_admin_can_generate_alert_with_ai(): void
+    {
+        $admin = User::factory()->admin()->create();
+        NiveauAlerte::factory()->create(['couleur' => 'rouge', 'niveau' => 4]);
+
+        $response = $this->actingAs($admin)->postJson('/admin/alertes-meteo/ai-generate', [
+            'prompt' => 'Kairouan, 47°C, Sirocco violent et pic de chaleur',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                'success',
+                'titre',
+                'couleur',
+                'niveau_id',
+                'message',
+                'source',
+                'provider',
+            ])
+            ->assertJson([
+                'success' => true,
+                'couleur' => 'rouge',
+            ]);
+    }
 }

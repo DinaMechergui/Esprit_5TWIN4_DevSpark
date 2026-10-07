@@ -43,4 +43,8 @@ return [
         'url' => 'https://openrouter.ai/api/v1/chat/completions',
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+    ],
+
 ];
