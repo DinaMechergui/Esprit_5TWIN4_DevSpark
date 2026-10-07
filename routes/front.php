@@ -15,6 +15,7 @@ use App\FrontOffice\Controllers\HomeController;
 use App\FrontOffice\Controllers\PointFraicheurController;
 use App\FrontOffice\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\FrontOffice\Controllers\ConseilController;
 
 // Page d'accueil.
 Route::get('/', [HomeController::class, 'index'])->name('front.home');
@@ -30,6 +31,9 @@ Route::get('/points-fraicheur/proches', [PointFraicheurController::class, 'proch
     ->name('points-fraicheur.proches');
 Route::get('/points-fraicheur/{pointFraicheur}', [PointFraicheurController::class, 'show'])
     ->name('points-fraicheur.show');
+    // Module « Conseils » : pages publiques.
+Route::get('/conseils', [ConseilController::class, 'index'])->name('conseils.index');
+Route::get('/conseils/{conseil}', [ConseilController::class, 'show'])->name('conseils.show');
 
 // Profil de l'utilisateur connecté.
 Route::middleware('auth')->group(function () {

@@ -25,6 +25,13 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{ route('conseils.index') }}"
+                       class="{{ request()->routeIs('conseils.index', 'conseils.show') ? 'active' : '' }}">
+                        Conseils
+                    </a>
+                </li>
+
                 @auth
                     <li>
                         <a href="{{ route('profile.edit') }}"
@@ -80,6 +87,13 @@
                 <a href="{{ route('points-fraicheur.index') }}"
                    class="{{ request()->routeIs('points-fraicheur.index', 'points-fraicheur.show') ? 'active' : '' }}">
                     Points de fraîcheur
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('conseils.index') }}"
+                   class="{{ request()->routeIs('conseils.index', 'conseils.show') ? 'active' : '' }}">
+                    Conseils
                 </a>
             </li>
 
