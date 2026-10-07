@@ -62,6 +62,12 @@
                 <div data-i18n="Catégories de conseils">Catégories de conseils</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->routeIs('admin.conseils.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.conseils.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-message-square-detail"></i>
+                <div data-i18n="Conseils">Conseils</div>
+            </a>
+        </li>
 
         {{-- Accès au site public --}}
         <li class="menu-header small text-uppercase">
@@ -81,4 +87,4 @@
         </li>
     </ul>
 </aside>
-<!-- / Menu -->
+<!-- / Menu --> 
