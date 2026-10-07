@@ -15,6 +15,7 @@ use App\FrontOffice\Controllers\AssistantController;
 use App\FrontOffice\Controllers\HomeController;
 use App\FrontOffice\Controllers\PointFraicheurController;
 use App\FrontOffice\Controllers\ProfileController;
+use App\Http\Controllers\Front\AlerteMeteoController as FrontAlerteMeteoController;
 use Illuminate\Support\Facades\Route;
 
 // Page d'accueil.
@@ -35,6 +36,13 @@ Route::get('/points-fraicheur/proches', [PointFraicheurController::class, 'proch
     ->name('points-fraicheur.proches');
 Route::get('/points-fraicheur/{pointFraicheur}', [PointFraicheurController::class, 'show'])
     ->name('points-fraicheur.show');
+
+// Module « Alertes météo » : pages publiques.
+Route::get('/alertes-meteo', [FrontAlerteMeteoController::class, 'index'])
+    ->name('alertes-meteo.index');
+Route::get('/alertes-meteo/{id}', [FrontAlerteMeteoController::class, 'show'])
+    ->name('alertes-meteo.show');
+
 
 // Profil de l'utilisateur connecté.
 Route::middleware('auth')->group(function () {

@@ -16,6 +16,8 @@ use App\BackOffice\Controllers\DashboardController;
 use App\BackOffice\Controllers\PointFraicheurController;
 use App\BackOffice\Controllers\TypePointController;
 use App\BackOffice\Controllers\UserController;
+use App\Http\Controllers\Back\AlerteMeteoController as BackAlerteMeteoController;
+use App\Http\Controllers\Back\NiveauAlerteController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
@@ -32,4 +34,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Module « Points de fraîcheur » : les points (enfant).
     Route::resource('points-fraicheur', PointFraicheurController::class)
         ->parameters(['points-fraicheur' => 'pointFraicheur']);
+
+    // Module « Alertes météo » : les niveaux d'alerte (parent).
+    Route::resource('niveaux-alerte', NiveauAlerteController::class)
+        ->parameters(['niveaux-alerte' => 'niveau_alerte']);
+
+    // Module « Alertes météo » : les alertes météo (enfant).
+    Route::resource('alertes-meteo', BackAlerteMeteoController::class)
+        ->parameters(['alertes-meteo' => 'alerte_meteo']);
 });
+
