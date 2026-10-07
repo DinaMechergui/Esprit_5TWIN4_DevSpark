@@ -52,6 +52,17 @@
             </a>
         </li>
 
+        {{-- Module « Conseils » --}}
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Conseils</span>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.categories-conseil.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.categories-conseil.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-bulb"></i>
+                <div data-i18n="Catégories de conseils">Catégories de conseils</div>
+            </a>
+        </li>
+
         {{-- Accès au site public --}}
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Site</span>

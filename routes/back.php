@@ -17,6 +17,7 @@ use App\BackOffice\Controllers\PointFraicheurController;
 use App\BackOffice\Controllers\TypePointController;
 use App\BackOffice\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\BackOffice\Controllers\CategorieConseilController;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Tableau de bord : /admin
@@ -32,4 +33,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Module « Points de fraîcheur » : les points (enfant).
     Route::resource('points-fraicheur', PointFraicheurController::class)
         ->parameters(['points-fraicheur' => 'pointFraicheur']);
+
+        // Module « Conseils » : les catégories (parent).
+    Route::resource('categories-conseil', CategorieConseilController::class)
+        ->parameters(['categories-conseil' => 'categorieConseil']);
+        
 });
