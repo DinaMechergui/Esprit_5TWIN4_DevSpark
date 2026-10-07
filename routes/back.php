@@ -18,6 +18,7 @@ use App\BackOffice\Controllers\TypePointController;
 use App\BackOffice\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\BackOffice\Controllers\CategorieConseilController;
+use App\BackOffice\Controllers\ConseilController;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     // Tableau de bord : /admin
@@ -37,5 +38,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         // Module « Conseils » : les catégories (parent).
     Route::resource('categories-conseil', CategorieConseilController::class)
         ->parameters(['categories-conseil' => 'categorieConseil']);
-        
+            Route::resource('conseils', ConseilController::class);
+
 });
