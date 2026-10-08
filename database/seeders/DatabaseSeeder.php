@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
             AlerteMeteoSeeder::class,
             CategorieConseilSeeder::class,
             ConseilSeeder::class,
+            TypeSignalementSeeder::class,
+            SignalementSeeder::class,
         ]);
     }
 }

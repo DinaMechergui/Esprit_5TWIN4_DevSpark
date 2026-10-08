@@ -103,6 +103,23 @@
             </a>
         </li>
 
+        {{-- Module « Signalements » --}}
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Signalements</span>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.types-signalement.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.types-signalement.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-category-alt"></i>
+                <div data-i18n="Types de signalements">Types de signalements</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.signalements.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.signalements.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-error-alt"></i>
+                <div data-i18n="Signalements">Signalements</div>
+            </a>
+        </li>
+
         {{-- Accès au site public --}}
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Site</span>

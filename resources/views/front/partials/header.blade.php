@@ -34,6 +34,12 @@
                 <li>
                     <a href="{{ route('conseils.index') }}" class="{{ request()->routeIs('conseils.index', 'conseils.show') ? 'active' : '' }}">Conseils</a>
                 </li>
+                <li>
+                    <a href="{{ route('signalements.index') }}"
+                       class="{{ request()->routeIs('signalements.*') ? 'active' : '' }}">
+                        Signalements
+                    </a>
+                </li>
 
                 @auth
                     <li>
@@ -101,6 +107,12 @@
             </li>
             <li>
                 <a href="{{ route('conseils.index') }}" class="{{ request()->routeIs('conseils.index', 'conseils.show') ? 'active' : '' }}">Conseils</a>
+            </li>
+            <li>
+                <a href="{{ route('signalements.index') }}"
+                   class="{{ request()->routeIs('signalements.*') ? 'active' : '' }}">
+                    Signalements
+                </a>
             </li>
 
             @guest
