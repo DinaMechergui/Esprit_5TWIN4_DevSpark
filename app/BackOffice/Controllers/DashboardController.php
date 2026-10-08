@@ -5,7 +5,8 @@ namespace App\BackOffice\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\View\View;
-
+use App\Models\CategorieConseil;
+use App\Models\Conseil;
 class DashboardController extends Controller
 {
     /**
@@ -26,10 +27,18 @@ class DashboardController extends Controller
 
         // Derniers inscrits affichés sur le tableau de bord.
         $latestUsers = User::latest()->take(5)->get();
-
+        // Module « Conseils » : statistiques et dernier conseil publié.
+        $conseilStats = [
+            'categories' => CategorieConseil::count(),
+            'conseils' => Conseil::count(),
+            'derniere_categorie' => CategorieConseil::withCount('conseils')
+                ->orderByDesc('conseils_count')
+                ->first(),
+        ];
         return view('back.pages.dashboard', [
             'stats' => $stats,
             'latestUsers' => $latestUsers,
+             'conseilStats' => $conseilStats,
         ]);
     }
 }

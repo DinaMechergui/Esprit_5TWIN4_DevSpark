@@ -68,6 +68,7 @@
                 <div data-i18n="Coupures">Coupures</div>
             </a>
         </li>
+
         {{-- Module « Alertes météo » --}}
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Alertes météo</span>
@@ -82,6 +83,23 @@
             <a href="{{ route('admin.alertes-meteo.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cloud-rain"></i>
                 <div data-i18n="Alertes météo">Alertes météo</div>
+            </a>
+        </li>
+
+        {{-- Module « Conseils » --}}
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Conseils</span>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.categories-conseil.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.categories-conseil.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-bulb"></i>
+                <div data-i18n="Catégories de conseils">Catégories de conseils</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->routeIs('admin.conseils.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.conseils.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-message-square-detail"></i>
+                <div data-i18n="Conseils">Conseils</div>
             </a>
         </li>
 

@@ -43,6 +43,8 @@ class DatabaseSeeder extends Seeder
             CoupureSeeder::class,
             NiveauAlerteSeeder::class,
             AlerteMeteoSeeder::class,
+            CategorieConseilSeeder::class,
+            ConseilSeeder::class,
         ]);
     }
 }
