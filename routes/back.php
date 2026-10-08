@@ -14,7 +14,9 @@
 
 use App\BackOffice\Controllers\DashboardController;
 use App\BackOffice\Controllers\PointFraicheurController;
+use App\BackOffice\Controllers\SignalementController;
 use App\BackOffice\Controllers\TypePointController;
+use App\BackOffice\Controllers\TypeSignalementController;
 use App\BackOffice\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +34,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Module « Points de fraîcheur » : les points (enfant).
     Route::resource('points-fraicheur', PointFraicheurController::class)
         ->parameters(['points-fraicheur' => 'pointFraicheur']);
+
+    // Module « Signalements » : les types (parent).
+    Route::resource('types-signalement', TypeSignalementController::class)
+        ->parameters(['types-signalement' => 'typeSignalement']);
+
+    // Module « Signalements » : les signalements (enfant).
+    Route::resource('signalements', SignalementController::class);
 });

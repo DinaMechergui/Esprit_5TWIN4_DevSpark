@@ -37,5 +37,8 @@ class DatabaseSeeder extends Seeder
 
         // Module « Points de fraîcheur » : les types avant leurs points.
         $this->call([TypePointSeeder::class, PointFraicheurSeeder::class]);
+
+        // Module « Signalements » : les types avant les signalements.
+        $this->call([TypeSignalementSeeder::class, SignalementSeeder::class]);
     }
 }
